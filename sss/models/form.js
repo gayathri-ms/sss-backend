@@ -4,6 +4,10 @@ const form = new mongoose.Schema({
   invoice: {
     type: Number,
   },
+  vehicle_no: {
+    type: String,
+    required: true,
+  },
   date: {
     type: Date,
     default: Date.now(),
@@ -40,4 +44,4 @@ const form = new mongoose.Schema({
   grandtotal: Number,
 });
 
-module.exports = mongoose.model("Form", form);
+module.exports = mongoose.model("Form1", form);

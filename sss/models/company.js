@@ -4,6 +4,7 @@ const company_schema = new mongoose.Schema({
   company_name: {
     type: String,
     required: true,
+    unique: true,
   },
   address: {
     type: String,

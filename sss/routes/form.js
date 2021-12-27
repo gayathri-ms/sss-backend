@@ -1,14 +1,26 @@
 const express = require("express");
 const router = express.Router();
 const Form = require("../models/form");
+const Item = require("../models/item");
 const formidable = require("formidable");
+const { updatemiddleware } = require("../controllers/updategst");
 
-router.post("/form", (req, res) => {
-  //   let form = new formidable.IncomingForm();
-  //   form.keepExtensions = true;
+router.post("/createform", (req, res) => {
+  // let form = new formidable.IncomingForm();
+  // form.keepExtensions = true;
 
-  //   form.parse((req) => {
-  const form = new Form(req.body);
+  // form.parse((req) => {
+  const { invoice, vehicle_no, consignor, from, to, consignee, gst_com } =
+    req.body;
+  const form = new Form({
+    invoice: invoice,
+    vehicle_no: vehicle_no,
+    consignor: consignor,
+    to: to,
+    from: from,
+    consignee: consignee,
+    gst_com: gst_com,
+  });
 
   form.save((err, f) => {
     if (err) {
@@ -18,7 +30,20 @@ router.post("/form", (req, res) => {
     }
     res.json(f);
   });
-  //   });
+  // });
+});
+router.put("/updategst/:id", updatemiddleware);
+
+router.get("/getform", (req, res) => {
+  console.log("in form");
+  Form.find().exec((err, details) => {
+    if (err || !details) {
+      return res.status(400).json({
+        error: "no details was found in DB",
+      });
+    }
+    res.json(details);
+  });
 });
 
 // router.get("/getbyid/:id", (req,res,next) => {
