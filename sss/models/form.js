@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const form = new mongoose.Schema({
   invoice: {
     type: Number,
+    unique: true,
   },
   vehicle_no: {
     type: String,
@@ -42,6 +43,8 @@ const form = new mongoose.Schema({
   },
   gst: Number,
   grandtotal: Number,
+  balance: Number,
+  amt_received: Number,
 });
 
 module.exports = mongoose.model("Form1", form);

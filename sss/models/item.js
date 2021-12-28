@@ -1,13 +1,13 @@
 const mongoose = require("mongoose");
 
 const item = new mongoose.Schema({
-  form_id: {
-    type: String,
+  invoice_id: {
+    type: Number,
     required: true,
   },
   nature: String,
-  Invoice: Number,
-  measurement: Number,
+  Invoice: String,
+  measurement: String,
   Particulars: String,
   freight: Number,
 });

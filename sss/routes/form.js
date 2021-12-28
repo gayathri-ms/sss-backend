@@ -32,6 +32,8 @@ router.post("/createform", (req, res) => {
   });
   // });
 });
+
+//updayed route
 router.put("/updategst/:id", updatemiddleware);
 
 router.get("/getform", (req, res) => {
@@ -43,6 +45,37 @@ router.get("/getform", (req, res) => {
       });
     }
     res.json(details);
+  });
+});
+
+router.delete("/deleteform/:id", (req, res) => {
+  // Form.find({ invoice: req.params.id }).exec((err, form) => {
+  //   if (err || !form) {
+  //     return res.status(400).json({
+  //       error: "no user was found in DB",
+  //     });
+  //   }
+  //   console.log(form);
+
+  //   Form.remove((err, frm) => {
+  //     if (err) {
+  //       return res.status(400).json({
+  //         error: "fail to delete this form",
+  //       });
+  //     }
+  //     res.json({
+  //       message: "Sucessfully deleted",
+  //     });
+  //   });
+  // });
+
+  Form.remove({ invoice: req.params.id }).exec((err, form) => {
+    if (err || !form) {
+      return res.status(400).json({
+        error: "no user was found in DB",
+      });
+    }
+    res.json({ msg: "deleted" });
   });
 });
 
