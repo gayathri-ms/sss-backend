@@ -36,6 +36,43 @@ router.post("/createform", (req, res) => {
 //updayed route
 router.put("/updategst/:id", updatemiddleware);
 
+router.get("/getform123/:id", (req, res) => {
+  const date123 = req.params.id;
+  console.log(date123);
+  Form.aggregate([
+    {
+      $addFields: {
+        date: {
+          $dateToString: {
+            format: "%Y-%m-%d",
+            date: "$date",
+          },
+        },
+      },
+    },
+    // {
+    //   $project: {
+    //     date: { date: "$date", timezone: " Asia/Kolkata" },
+    //   },
+    // },
+    {
+      $match: {
+        date: { $eq: date123 },
+      },
+    },
+  ]).exec((err, users) => {
+    if (err || !users) {
+      return res.status(400).json({
+        error: "no user was found in DB",
+      });
+    }
+    res.json(users);
+  });
+});
+
+router.put("/updategst/:id", updatemiddleware);
+
+//get form by consignee and date
 router.get("/getform", (req, res) => {
   console.log("in form");
   Form.find().exec((err, details) => {
