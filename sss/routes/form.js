@@ -44,6 +44,8 @@ router.post("/createform", (req, res) => {
 //updayed route
 router.put("/updategst/:id", updatemiddleware);
 
+
+//getform by date
 router.get("/getform123/:id", (req, res) => {
   const date123 = req.params.id;
   Form.aggregate([
@@ -72,7 +74,20 @@ router.get("/getform123/:id", (req, res) => {
   });
 });
 
-router.put("/updategst/:id", updatemiddleware);
+
+//getform by company
+router.get("/getform/:company", (req, res) => {
+ 
+  Form.find({consigner:req.params.company}).exec((err, details) => {
+    if (err || !details) {
+      return res.status(400).json({
+        error: "no details was found in DB",
+      });
+    }
+    res.json(details);
+  });
+});
+
 
 //get form by consignee and date
 router.get("/getform", (req, res) => {
@@ -118,15 +133,6 @@ router.delete("/deleteform/:id", (req, res) => {
   });
 });
 
-// router.get("/getbyid/:id", (req,res,next) => {
-//     const id = req.params.id;
-//     Form.findById(id).exec((err,user) =>{
-//         if(err)
-//             res.status(400).json("user is not found");
-//         req.profile = user;
-//         next();
 
-//     })
-// })
 
 module.exports = router;
