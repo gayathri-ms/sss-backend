@@ -10,6 +10,13 @@ router.post("/createform", (req, res) => {
   // form.keepExtensions = true;
 
   // form.parse((req) => {
+
+  var date = new Date();
+  console.log("new dateee>>", date);
+
+  var localNow = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+  console.log("local dateee>>", localNow);
+
   const { invoice, vehicle_no, consignor, from, to, consignee, gst_com } =
     req.body;
   const form = new Form({
@@ -17,6 +24,7 @@ router.post("/createform", (req, res) => {
     vehicle_no: vehicle_no,
     consignor: consignor,
     to: to,
+    date: localNow,
     from: from,
     consignee: consignee,
     gst_com: gst_com,
@@ -38,7 +46,6 @@ router.put("/updategst/:id", updatemiddleware);
 
 router.get("/getform123/:id", (req, res) => {
   const date123 = req.params.id;
-  console.log(date123);
   Form.aggregate([
     {
       $addFields: {
@@ -50,11 +57,6 @@ router.get("/getform123/:id", (req, res) => {
         },
       },
     },
-    // {
-    //   $project: {
-    //     date: { date: "$date", timezone: " Asia/Kolkata" },
-    //   },
-    // },
     {
       $match: {
         date: { $eq: date123 },

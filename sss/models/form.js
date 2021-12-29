@@ -11,8 +11,10 @@ const form = new mongoose.Schema({
   },
   date: {
     type: Date,
-    default: Date.now(),
   },
+  // my_date: {
+  //   type: Date,
+  // },
   consignor: {
     type: String,
     required: true,
