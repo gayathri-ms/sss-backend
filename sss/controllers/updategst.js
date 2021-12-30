@@ -28,7 +28,14 @@ exports.updatemiddleware = (req, res) => {
       console.log(it);
       Form.findByIdAndUpdate(
         { _id: it[0]._id },
-        { $set: { gst: req.body.gst, total: sum, grandtotal: grand_total } },
+        {
+          $set: {
+            gst: req.body.gst,
+            total: sum,
+            grandtotal: grand_total,
+            balance: grand_total,
+          },
+        },
         { new: true, useFindAndModify: false },
         (err, item) => {
           if (err) {

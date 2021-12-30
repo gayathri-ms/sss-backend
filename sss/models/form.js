@@ -12,9 +12,9 @@ const form = new mongoose.Schema({
   date: {
     type: Date,
   },
-  // my_date: {
-  //   type: Date,
-  // },
+  due_date: {
+    type: Date,
+  },
   consignor: {
     type: String,
     required: true,
@@ -47,6 +47,7 @@ const form = new mongoose.Schema({
   grandtotal: Number,
   balance: Number,
   amt_received: Number,
+  date_received: Date,
 });
 
 module.exports = mongoose.model("Form1", form);

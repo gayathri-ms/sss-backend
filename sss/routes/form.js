@@ -12,10 +12,16 @@ router.post("/createform", (req, res) => {
   // form.parse((req) => {
 
   var date = new Date();
-  console.log("new dateee>>", date);
+  // console.log("new dateee>>", date);
+  var date2 = new Date();
+  date2.setDate(date.getDate() + 20);
+  // console.log("d2", date2);
 
   var localNow = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
-  console.log("local dateee>>", localNow);
+  var duelocal = new Date(date2.getTime() - date2.getTimezoneOffset() * 60000);
+
+  // console.log(duelocal);
+  // console.log("local dateee>>", localNow);
 
   const { invoice, vehicle_no, consignor, from, to, consignee, gst_com } =
     req.body;
@@ -25,6 +31,7 @@ router.post("/createform", (req, res) => {
     consignor: consignor,
     to: to,
     date: localNow,
+    due_date: duelocal,
     from: from,
     consignee: consignee,
     gst_com: gst_com,
@@ -43,7 +50,6 @@ router.post("/createform", (req, res) => {
 
 //updayed route
 router.put("/updategst/:id", updatemiddleware);
-
 
 //getform by date
 router.get("/getform123/:id", (req, res) => {
@@ -74,11 +80,9 @@ router.get("/getform123/:id", (req, res) => {
   });
 });
 
-
 //getform by company
 router.get("/getform/:company", (req, res) => {
- 
-  Form.find({consigner:req.params.company}).exec((err, details) => {
+  Form.find({ consignor: req.params.company }).exec((err, details) => {
     if (err || !details) {
       return res.status(400).json({
         error: "no details was found in DB",
@@ -87,7 +91,6 @@ router.get("/getform/:company", (req, res) => {
     res.json(details);
   });
 });
-
 
 //get form by consignee and date
 router.get("/getform", (req, res) => {
@@ -133,6 +136,72 @@ router.delete("/deleteform/:id", (req, res) => {
   });
 });
 
+router.get("/getnotified", (req, res) => {
+  // var date = new Date();
+  var date2 = new Date();
+  // date2.setDate(date.getDate() + 20);
+  var duelocal = new Date(date2.getTime() - date2.getTimezoneOffset() * 60000);
+  var local = duelocal.toLocaleDateString();
+  console.log("due", local);
 
+  Form.aggregate([
+    {
+      $addFields: {
+        date123: {
+          $dateToString: {
+            format: "%d/%m/%Y",
+            date: "$due_date",
+          },
+        },
+      },
+    },
+    {
+      $match: {
+        date123: { $eq: local },
+      },
+    },
+  ]).exec((err, users) => {
+    if (err || !users) {
+      return res.status(400).json({
+        error: "no user was found in DB",
+      });
+    }
+    res.json(users);
+  });
+});
+
+router.get("/total", (req, res) => {
+  let sum = 0;
+  Form.find().exec((err, users) => {
+    if (err || !users) {
+      return res.status(400).json({
+        error: "no user was found in DB",
+      });
+    }
+    console.log(users);
+    users.map((user, i) => (sum = sum + user.balance));
+    res.json({ total: sum });
+  });
+});
+
+router.get("/payment", (req, res) => {
+  Form.aggregate([
+    {
+      $group: {
+        _id: { consignor: "$consignor" },
+
+        balance: { $sum: "$balance" },
+      },
+    },
+  ])
+    .then((result) => {
+      console.log(result);
+      res.json(result);
+    })
+    .catch((err) => {
+      console.log("error");
+      res.status(400).json({ msg: err });
+    });
+});
 
 module.exports = router;
