@@ -49,3 +49,41 @@ exports.updatemiddleware = (req, res) => {
     });
   });
 };
+
+exports.updateBalance = (req, res) => {
+  const invoice_id = req.params.id;
+  const amount = req.params.amount;
+
+  console.log("id and amount are>>>>", invoice_id, amount);
+
+  Form.find({ invoice: invoice_id }).exec((err, it) => {
+    if (err || !it) {
+      return res.status(400).json({
+        error: "no user was found in DB",
+      });
+    }
+    let sum = it[0].balance - amount;
+    let amt = it[0].grandtotal - sum;
+
+    console.log("sum>", it[0].grandtotal);
+    console.log(it);
+    Form.findByIdAndUpdate(
+      { _id: it[0]._id },
+      {
+        $set: {
+          balance: sum,
+          amt_received: amt,
+        },
+      },
+      { new: true, useFindAndModify: false },
+      (err, item) => {
+        if (err) {
+          return res.status(400).json({
+            error: "your cant update this Item ",
+          });
+        }
+        res.json(item);
+      }
+    );
+  });
+};

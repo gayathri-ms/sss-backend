@@ -3,8 +3,8 @@ const mongoose = require("mongoose");
 const company_schema = new mongoose.Schema({
   company_name: {
     type: String,
-    required: true,
     unique: true,
+    required: true,
   },
   address: {
     type: String,

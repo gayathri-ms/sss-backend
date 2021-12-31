@@ -3,7 +3,7 @@ const router = express.Router();
 const Form = require("../models/form");
 const Item = require("../models/item");
 const formidable = require("formidable");
-const { updatemiddleware } = require("../controllers/updategst");
+const { updatemiddleware, updateBalance } = require("../controllers/updategst");
 
 router.post("/createform", (req, res) => {
   // let form = new formidable.IncomingForm();
@@ -40,7 +40,7 @@ router.post("/createform", (req, res) => {
   form.save((err, f) => {
     if (err) {
       return res.status(400).json({
-        error: "cannot save the form",
+        error: "Cannot save the form - Invoice already exists",
       });
     }
     res.json(f);
@@ -50,6 +50,9 @@ router.post("/createform", (req, res) => {
 
 //updayed route
 router.put("/updategst/:id", updatemiddleware);
+
+//update balance
+router.put("/updatebalance/:id/:amount", updateBalance);
 
 //getform by date
 router.get("/getform123/:id", (req, res) => {
@@ -83,6 +86,17 @@ router.get("/getform123/:id", (req, res) => {
 //getform by company
 router.get("/getform/:company", (req, res) => {
   Form.find({ consignor: req.params.company }).exec((err, details) => {
+    if (err || !details) {
+      return res.status(400).json({
+        error: "no details was found in DB",
+      });
+    }
+    res.json(details);
+  });
+});
+//getform by invoice
+router.get("/getinvoice/:id", (req, res) => {
+  Form.find({ invoice: req.params.id }).exec((err, details) => {
     if (err || !details) {
       return res.status(400).json({
         error: "no details was found in DB",
