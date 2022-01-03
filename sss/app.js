@@ -4,7 +4,7 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var bodyParser = require("body-parser");
-
+require("dotenv").config();
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var cors = require("cors");
@@ -17,7 +17,7 @@ var form = require("./routes/form");
 var item = require("./routes/item");
 
 mongoose
-  .connect("mongodb://localhost:27017/test")
+  .connect(process.env.DATABASE)
   .then(() => {
     console.log("db is connected");
   })
