@@ -16,7 +16,12 @@ router.get("/getcompany/:id", async (req, res) => {
 });
 
 router.post("/add", (req, res) => {
-  const company = new Company(req.body);
+  const { company_name, address, GST } = req.body;
+  const company = new Company({
+    company_name: company_name,
+    address: address,
+    GST: GST,
+  });
   company.save((err, com) => {
     if (err) {
       return res.status(400).json({ err: "cannot save the data" });
