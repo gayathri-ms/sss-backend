@@ -25,7 +25,7 @@ exports.signup = (req, res) => {
     });
   }
   console.log("email was correct only");
-
+  const { username, email, password } = req.body;
   const user = new User(req.body);
   ///user._id=user.email;
   user.save((err, user) => {
