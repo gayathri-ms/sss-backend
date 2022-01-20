@@ -26,6 +26,7 @@ router.post(
     // form.parse((req) => {
 
     var date = new Date();
+
     // console.log("new dateee>>", date);
     var date2 = new Date();
     date2.setDate(date.getDate() + 20);
@@ -35,6 +36,12 @@ router.post(
     var duelocal = new Date(
       date2.getTime() - date2.getTimezoneOffset() * 60000
     );
+
+    const dateObj = new Date(localNow);
+    const month = dateObj.getMonth() + 1;
+    const day = String(dateObj.getDate()).padStart(2, "0");
+    const year = dateObj.getFullYear();
+    const output = day + "-" + month + "-" + year;
 
     // console.log(duelocal);
     // console.log("local dateee>>", localNow);
@@ -47,6 +54,7 @@ router.post(
       consignor: consignor,
       to: to,
       date: localNow,
+      dateformat: output,
       due_date: duelocal,
       from: from,
       consignee: consignee,
