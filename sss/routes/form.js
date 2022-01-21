@@ -10,6 +10,7 @@ const {
   isSignedIn,
   getUserById,
 } = require("../controllers/auth");
+const user = require("../models/user");
 
 //params
 router.param("userId", getUserById);
@@ -36,6 +37,8 @@ router.post(
     var duelocal = new Date(
       date2.getTime() - date2.getTimezoneOffset() * 60000
     );
+    const { invoice, vehicle_no, consignor, from, to, consignee, gst_com } =
+      req.body;
 
     const dateObj = new Date(localNow);
     const month = dateObj.getMonth() + 1;
@@ -45,30 +48,61 @@ router.post(
 
     // console.log(duelocal);
     // console.log("local dateee>>", localNow);
+    // const maxi = 0;
+    // Form.aggregate({
+    //   $group: {
+    //     _id: null,
+    //     max: { $max: "$invoice" },
+    //   },
+    // }).exec((err, users) => {
+    //   if (err || !users) {
+    //     return res.status(400).json({
+    //       error: "no user was found in DB",
+    //     });
+    //   }
+    //   // maxi = users;
+    //   console.log("maxi", users);
 
-    const { invoice, vehicle_no, consignor, from, to, consignee, gst_com } =
-      req.body;
-    const form = new Form({
-      invoice: invoice,
-      vehicle_no: vehicle_no,
-      consignor: consignor,
-      to: to,
-      date: localNow,
-      dateformat: output,
-      due_date: duelocal,
-      from: from,
-      consignee: consignee,
-      gst_com: gst_com,
-    });
+    // });
+    // console.log("maxi", maxi);
 
-    form.save((err, f) => {
-      if (err) {
-        return res.status(400).json({
-          error: "Cannot save the form - Invoice already exists",
-        });
+    let maxi = 0;
+    Form.find().exec((err, users) => {
+      if (err || !users) {
+        return res.status(400).json({ err: "No user was found in DB" });
       }
-      res.json(f);
+
+      users.map((user) => {
+        maxi = maxi < user.invoice ? user.invoice : user;
+      });
+      console.log("maxi", maxi);
+      const form = new Form({
+        invoice: maxi + 1,
+        vehicle_no: vehicle_no,
+        consignor: consignor,
+        to: to,
+        date: localNow,
+        dateformat: output,
+        due_date: duelocal,
+        from: from,
+        consignee: consignee,
+        gst_com: gst_com,
+      });
+
+      form.save((err, f) => {
+        if (err) {
+          return res.status(400).json({
+            error: "Cannot save the form - Invoice already exists",
+          });
+        }
+        res.json(f);
+      });
     });
+    // form123456.map((f) => {
+    //   maxi = maxi < f.invoice ? f.invoice : maxi;
+    // });
+    // console.log("maximum>>", maxi);
+
     // });
   }
 );
